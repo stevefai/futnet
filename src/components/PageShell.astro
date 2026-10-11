@@ -5,6 +5,7 @@ import Header from './Header.astro';
 import Hero from './Hero.astro';
 import Feed from './Feed.astro';
 import Story from './Story.astro';
+import Gallery from './Gallery.astro';
 import Players from './Players.astro';
 import Footer from './Footer.astro';
 
@@ -23,6 +24,7 @@ const { posts } = await loadSiteData();
     <Hero lang={lang} />
     <Feed lang={lang} posts={posts} />
     <Story lang={lang} />
+    <Gallery lang={lang} />
     <Players lang={lang} />
   </main>
   <Footer lang={lang} />

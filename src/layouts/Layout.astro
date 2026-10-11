@@ -26,7 +26,8 @@ const descriptions = {
 };
 
 const pageTitle = title ? title + ' – N.A.C. Curtatone – Futnet' : 'N.A.C. Curtatone – Futnet';
-const site = Astro.site ? Astro.site.href.replace(/\/$/, '') : '';
+// Only the origin: the base path is added below, so SITE_URL may or may not include /<repo>.
+const site = Astro.site ? Astro.site.origin : '';
 const itUrl = site ? site + base + itPath : '';
 const enUrl = site ? site + base + enPath : '';
 ---

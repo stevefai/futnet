@@ -18,6 +18,7 @@ const home = assetUrl(homePath);
 const links = [
   { href: `${home}#feed`, label: t.navFeed, current: false },
   { href: `${home}#story`, label: t.navStory, current: false },
+  { href: `${home}#gallery`, label: t.navGallery, current: false },
   { href: `${home}#players`, label: t.navPlayers, current: false },
   { href: assetUrl(contactPaths[lang]), label: t.navContact, current: page === 'contact' },
 ];
@@ -33,7 +34,7 @@ const links = [
     </a>
 
     <!-- desktop -->
-    <nav class="hidden items-center gap-7 text-[17px] font-medium md:flex" aria-label="Main">
+    <nav class="hidden items-center gap-5 whitespace-nowrap text-[16px] font-medium md:flex lg:gap-7 lg:text-[17px]" aria-label="Main">
       {
         links.map((l) => (
           <a href={l.href} aria-current={l.current ? 'page' : undefined} class:list={['text-primary-content/80 hover:text-primary-content', l.current && 'font-semibold !text-primary-content underline decoration-secondary decoration-2 underline-offset-8']}>

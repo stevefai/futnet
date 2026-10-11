@@ -4,7 +4,9 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/fetch-gallery.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/fetch-gallery.mjs",
     "build": "astro build",
     "preview": "astro preview"
   },

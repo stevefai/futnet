@@ -1,0 +1,120 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { getUi } from '../content';
+import type { Lang } from '../lib/types';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getUi(lang);
+
+// Every image in src/assets/gallery/ is shown, sorted by file name.
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/gallery/*.{jpg,jpeg,png,webp,avif}', { eager: true });
+const photos = await Promise.all(
+  Object.entries(files)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(async ([, mod], i) => ({
+      thumb: mod.default,
+      full: (await getImage({ src: mod.default, width: 1800 })).src,
+      alt: `${t.galleryTitle} ${i + 1}`,
+    })),
+);
+---
+
+{
+  photos.length > 0 && (
+    <section id="gallery" class="py-12 md:py-20" data-gallery>
+      <div class="mx-auto max-w-[1200px] px-5 md:px-10">
+        <div class="flex items-end justify-between gap-4">
+          <h2 class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.galleryTitle}</h2>
+          <div class="hidden gap-2 md:flex">
+            <button type="button" class="btn btn-square btn-outline" data-track-prev aria-label={t.galleryPrev}>‹</button>
+            <button type="button" class="btn btn-square btn-outline" data-track-next aria-label={t.galleryNext}>›</button>
+          </div>
+        </div>
+
+        <ul class="mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 md:mt-12" data-track>
+          {photos.map((p, i) => (
+            <li class="w-[82%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%]">
+              <button type="button" class="group block w-full overflow-hidden rounded-t-lg border-b-[5px] border-secondary bg-base-300" data-open={i} data-full={p.full} aria-label={`${t.galleryOpen}: ${p.alt}`}>
+                <Image src={p.thumb} alt={p.alt} width={800} height={600} loading={i < 3 ? 'eager' : 'lazy'} class="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <dialog class="m-0 h-full max-h-none w-full max-w-none bg-black/95 p-0 backdrop:bg-black" data-lightbox aria-label={t.galleryTitle}>
+        <div class="relative flex h-full w-full items-center justify-center">
+          <img alt="" class="max-h-full max-w-full object-contain" data-lightbox-img />
+          <button type="button" class="btn btn-circle btn-ghost absolute right-3 top-3 text-2xl text-white" data-lightbox-close aria-label={t.galleryClose}>✕</button>
+          <button type="button" class="btn btn-circle btn-ghost absolute left-2 top-1/2 -translate-y-1/2 text-3xl text-white md:left-5" data-lightbox-prev aria-label={t.galleryPrev}>‹</button>
+          <button type="button" class="btn btn-circle btn-ghost absolute right-2 top-1/2 -translate-y-1/2 text-3xl text-white md:right-5" data-lightbox-next aria-label={t.galleryNext}>›</button>
+          <p class="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-white/80" data-lightbox-count></p>
+        </div>
+      </dialog>
+    </section>
+  )
+}
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-gallery]');
+  if (root) {
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const dialog = root.querySelector<HTMLDialogElement>('[data-lightbox]')!;
+    const img = root.querySelector<HTMLImageElement>('[data-lightbox-img]')!;
+    const count = root.querySelector<HTMLElement>('[data-lightbox-count]')!;
+    const items = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-open]'));
+    let current = 0;
+
+    // Carousel arrows (desktop); on phones the row is swiped.
+    const step = () => track.clientWidth * 0.8;
+    root.querySelector('[data-track-prev]')?.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+    root.querySelector('[data-track-next]')?.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+
+    // Full screen viewer
+    const show = (index: number) => {
+      current = (index + items.length) % items.length;
+      const item = items[current];
+      img.src = item.dataset.full ?? '';
+      img.alt = item.querySelector('img')?.alt ?? '';
+      count.textContent = `${current + 1} / ${items.length}`;
+    };
+    const open = (index: number) => {
+      show(index);
+      dialog.showModal();
+      document.documentElement.style.overflow = 'hidden';
+    };
+    items.forEach((item, i) => item.addEventListener('click', () => open(i)));
+    // Runs on every way of closing (button, backdrop, Escape).
+    const release = () => {
+      document.documentElement.style.overflow = '';
+      track.children[current]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
+    };
+    const close = () => {
+      if (dialog.open) dialog.close();
+      release();
+    };
+    root.querySelector('[data-lightbox-close]')?.addEventListener('click', close);
+    root.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => show(current - 1));
+    root.querySelector('[data-lightbox-next]')?.addEventListener('click', () => show(current + 1));
+    dialog.addEventListener('close', release);
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog || e.target === dialog.firstElementChild) close();
+    });
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(current - 1);
+      if (e.key === 'ArrowRight') show(current + 1);
+    });
+
+    // Swipe left/right in the viewer
+    let startX = 0;
+    dialog.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    dialog.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+    });
+  }
+</script>

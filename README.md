@@ -58,6 +58,36 @@ If the sheet link breaks, the build **fails on purpose** and the previously publ
 > GitHub switches off scheduled runs in public repositories after ~60 days without any repository activity.
 > If new rows stop appearing, open Actions and re-enable the workflow (or push any small change).
 
+## Photos from Google Drive
+
+The photo carousel shows every JPG/PNG/WebP/AVIF in one Google Drive folder. Anyone with edit access to the folder
+can add photos; they appear on the site at the next rebuild (within 30 minutes). The folder stays private: a small
+Google Apps Script, protected by a secret token, hands the photos to the build.
+
+**One-time setup**
+
+1. Make a long random token. In a terminal: `openssl rand -hex 24` (copy the result).
+2. Go to <https://script.google.com> > **New project**. Delete the sample code and paste the whole of `apps-script/gallery.gs`.
+   Replace `PASTE_A_LONG_RANDOM_TEXT_HERE` with the token. Check `FOLDER_ID` is the id of your photo folder
+   (the last part of the folder address).
+3. **Deploy > New deployment** > type **Web app** > Execute as **Me** > Who has access **Anyone** > Deploy.
+   Approve the permission request (Google warns the app is unverified: *Advanced > Go to ... (unsafe)* - it is your own script).
+   Copy the **Web app URL** (ends in `/exec`).
+4. GitHub repository > Settings > Secrets and variables > Actions:
+   - **Variables** tab: `PHOTOS_API_URL` = the web app URL
+   - **Secrets** tab: `PHOTOS_API_TOKEN` = the token
+5. Run the workflow once (Actions > Build and deploy > Run workflow).
+
+For local testing put the same two values in `.env` (`PHOTOS_API_URL`, `PHOTOS_API_TOKEN`).
+
+**Good to know**
+
+- Photos are ordered newest upload first. Removing a photo from the folder removes it from the site.
+- iPhone HEIC photos are ignored (the build prints a warning); export them as JPG first.
+- Changed the script code? Use **Deploy > Manage deployments > Edit > New version**; the URL stays the same.
+- If the URL or token is wrong the build **fails on purpose** and the previous site stays online.
+- Photos you put by hand in `src/assets/gallery/` also appear; only files starting with `drive-` are replaced at every build.
+
 ## 5. Custom domain (later)
 
 Buy the domain, then Settings > Pages > Custom domain, and add the DNS records GitHub shows.
@@ -81,6 +111,7 @@ Remove the `BASE_PATH` variable and set `SITE_URL` to the new address.
 | the few lines of browser JavaScript (phone menu, language links, "Show older posts") | bottom of `src/layouts/Layout.astro` |
 | news / events | the Google Sheet |
 | players and their photos | `src/data/players.ts`; photos go in `src/assets/players/` |
+| the photo carousel | the Google Drive folder (see "Photos from Google Drive") |
 
 ## Optional: publish instantly after editing the sheet
 
