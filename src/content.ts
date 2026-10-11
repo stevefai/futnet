@@ -1,25 +1,32 @@
 /*
-  TEXTS THAT RARELY CHANGE (team description, history, contacts, labels).
+  TEXTS THAT RARELY CHANGE (site description, history, contacts, labels).
   Anything in [square brackets] is a placeholder to replace.
-  News and events come from the Google Sheet; players are in src/data/players.ts.
+  News and events come from the Google Sheet; the team's players are in src/data/players.ts.
 */
 import type { Lang } from './lib/types';
 
-export const team = {
-  name: 'N.A.C. Curtatone',
-  since: 1990,
+export const site = {
+  name: 'Futnet Italia',
+  subtitle: 'Calcio Tenis',
+  logo: 'futnet-italia.png', // file in /public
   // Leave a value empty ('') to hide that link on the contact page and in the footer.
   contact: {
     email: '',
     facebook: 'https://www.facebook.com/people/NAC-Curtatone-Futnet/100085691074140/',
-    instagram: '',
+    instagram: 'https://www.instagram.com/futnet_italia/',
   },
   timeline: [
-    { year: '1990', it: '[Fondazione della squadra]', en: '[Founding of the team]' },
-    { year: '[ANNO]', it: '[Primo torneo o titolo]', en: '[First tournament or title]' },
-    { year: '[ANNO]', it: '[Piazzamento o traguardo]', en: '[National ranking or milestone]' },
+    { year: '[ANNO]', it: '[Nascita di Futnet Italia]', en: '[Founding of Futnet Italia]' },
+    { year: '[ANNO]', it: '[Primo torneo]', en: '[First tournament]' },
+    { year: '[ANNO]', it: '[Traguardo importante]', en: '[Milestone]' },
     { year: '[ANNO]', it: '[Ultimo risultato importante]', en: '[Recent highlight]' },
   ],
+};
+
+/** The team shown in the "Teams" section (its players are in src/data/players.ts). */
+export const club = {
+  name: 'N.A.C. Curtatone',
+  crest: 'crest.png', // file in /public
 };
 
 /** Contact page address in each language, relative to the site base. */
@@ -27,36 +34,37 @@ export const contactPaths = { it: 'contatti/', en: 'en/contact/' };
 
 const text = {
   it: {
-    tagline: '[Una o due frasi sulla squadra: dove giochiamo, cosa ci rappresenta.]',
+    tagline: '[Una o due frasi su Futnet Italia: cos\'è il Calcio Tenis e a chi è rivolto.]',
     story: [
-      '[Paragrafo su come è nata la squadra e da chi.]',
-      '[Paragrafo su risultati, tornei e cosa significa il futnet per il gruppo.]',
+      '[Paragrafo su cos\'è il Futnet / Calcio Tenis e come è nato in Italia.]',
+      '[Paragrafo su CSEN, i tornei e le squadre che partecipano.]',
     ],
-    footerLine: '[Breve frase: sponsor, lega o federazione.]',
+    footerLine: 'Centro Sportivo Educativo Nazionale',
   },
   en: {
-    tagline: '[One or two sentences about the team: where you play, what you stand for.]',
+    tagline: '[One or two sentences about Futnet Italia: what Calcio Tenis is and who it is for.]',
     story: [
-      '[Paragraph about how the team started and by whom.]',
-      '[Paragraph about achievements, tournaments, and what futnet means to the group.]',
+      '[Paragraph about what Futnet / Calcio Tenis is and how it started in Italy.]',
+      '[Paragraph about CSEN, the tournaments and the teams taking part.]',
     ],
-    footerLine: '[Short line: sponsors, league or federation.]',
+    footerLine: 'Centro Sportivo Educativo Nazionale',
   },
 };
 
 const ui = {
   it: {
     navFeed: 'Novità ed eventi',
-    navStory: 'La nostra storia',
-    navPlayers: 'Giocatori',
+    navStory: 'Chi siamo',
+    navPlayers: 'Squadre',
     navGallery: 'Foto',
     navContact: 'Contatti',
     menu: 'Apri il menu',
     language: 'Lingua',
+    logoAlt: 'Logo Futnet Italia – Calcio Tenis',
     crestAlt: 'Stemma N.A.C. Curtatone',
-    eyebrow: 'Futnet · Dal 1990',
+    eyebrow: 'Calcio Tenis · CSEN',
     ctaFeed: 'Ultime novità ed eventi',
-    ctaPlayers: 'Conosci i giocatori',
+    ctaPlayers: 'Conosci le squadre',
     feedTitle: 'Novità ed eventi',
     feedOlder: 'Mostra post precedenti',
     feedEmpty: 'Ancora nessun post.',
@@ -66,13 +74,13 @@ const ui = {
     viewFacebook: 'Vedi su Facebook',
     moreInfo: 'Maggiori informazioni',
     readMore: 'Leggi di più',
-    storyTitle: 'Storia della squadra',
+    storyTitle: 'Chi siamo',
     galleryTitle: 'Foto',
     galleryOpen: 'Apri a schermo intero',
     galleryClose: 'Chiudi',
     galleryPrev: 'Foto precedente',
     galleryNext: 'Foto successiva',
-    playersTitle: 'Giocatori',
+    playersTitle: 'Squadre',
     playersEmpty: 'Ancora nessun giocatore.',
     captain: 'Capitano',
     contact: 'Contatti',
@@ -80,19 +88,21 @@ const ui = {
     contactEmpty: 'I nostri contatti arriveranno presto.',
     contactBack: 'Torna alla home',
     contactOpenPage: 'Apri la nostra pagina',
+    playersLabel: 'Giocatori',
   },
   en: {
     navFeed: 'News & events',
-    navStory: 'Our story',
-    navPlayers: 'Players',
+    navStory: 'About us',
+    navPlayers: 'Teams',
     navGallery: 'Photos',
     navContact: 'Contact',
     menu: 'Open menu',
     language: 'Language',
+    logoAlt: 'Futnet Italia – Calcio Tenis logo',
     crestAlt: 'N.A.C. Curtatone crest',
-    eyebrow: 'Futnet · Since 1990',
+    eyebrow: 'Calcio Tenis · CSEN',
     ctaFeed: 'Latest news & events',
-    ctaPlayers: 'Meet the players',
+    ctaPlayers: 'Meet the teams',
     feedTitle: 'News & events',
     feedOlder: 'Show older posts',
     feedEmpty: 'No posts yet.',
@@ -102,13 +112,13 @@ const ui = {
     viewFacebook: 'View on Facebook',
     moreInfo: 'More information',
     readMore: 'Read more',
-    storyTitle: 'History of the team',
+    storyTitle: 'About us',
     galleryTitle: 'Photos',
     galleryOpen: 'Open full screen',
     galleryClose: 'Close',
     galleryPrev: 'Previous photo',
     galleryNext: 'Next photo',
-    playersTitle: 'Players',
+    playersTitle: 'Teams',
     playersEmpty: 'No players yet.',
     captain: 'Captain',
     contact: 'Contact',
@@ -116,6 +126,7 @@ const ui = {
     contactEmpty: 'Our contact details are coming soon.',
     contactBack: 'Back to home',
     contactOpenPage: 'Open our page',
+    playersLabel: 'Players',
   },
 };
 

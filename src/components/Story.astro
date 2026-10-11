@@ -1,5 +1,5 @@
 ---
-import { getText, getUi, team } from '../content';
+import { getText, getUi, site } from '../content';
 import type { Lang } from '../lib/types';
 
 interface Props {
@@ -20,7 +20,7 @@ const copy = getText(lang);
 
     <ol class="min-w-0 flex-1">
       {
-        team.timeline.map((item) => (
+        site.timeline.map((item) => (
           <li class="flex items-start gap-6 border-t-[1.5px] border-[#C6CDE4] py-5">
             <span class="w-24 shrink-0 font-display text-[32px] font-bold leading-[1.1] text-accent">{item.year}</span>
             <span class="min-w-0 flex-1 text-[#2A3560]">{item[lang]}</span>

@@ -1,4 +1,4 @@
-# N.A.C. Curtatone – Futnet website
+# Futnet Italia – Calcio Tenis website
 
 Astro + Tailwind CSS + DaisyUI (no React, almost no JavaScript in the browser). News and events are typed into a **Google Sheet**; the site reads the sheet
 when it is built and rebuilds itself automatically every 30 minutes (or instantly with one click).
@@ -105,7 +105,8 @@ Remove the `BASE_PATH` variable and set `SITE_URL` to the new address.
 | to change | edit |
 |---|---|
 | tagline, history, timeline, footer line, contact links, button labels | `src/content.ts` |
-| colours (navy, red, background) | `src/styles/global.css` (the `nac` theme at the top) |
+| site name, logo file, the team shown in "Teams" (name and crest) | `site` and `club` in `src/content.ts`; image files in `public/` |
+| colours (blue, red, gold from the logo) | `src/styles/global.css` (the `futnet` theme at the top) |
 | fonts | `src/styles/global.css` (`@theme`) and the `@fontsource` imports in `src/layouts/Layout.astro` |
 | layout of a section | `src/components/*.astro` (Tailwind and DaisyUI classes) |
 | the few lines of browser JavaScript (phone menu, language links, "Show older posts") | bottom of `src/layouts/Layout.astro` |

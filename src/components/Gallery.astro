@@ -38,7 +38,7 @@ const photos = await Promise.all(
         <ul class="mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 md:mt-12" data-track>
           {photos.map((p, i) => (
             <li class="w-[82%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%]">
-              <button type="button" class="group block w-full overflow-hidden rounded-t-lg border-b-[5px] border-secondary bg-base-300" data-open={i} data-full={p.full} aria-label={`${t.galleryOpen}: ${p.alt}`}>
+              <button type="button" class="group block w-full overflow-hidden rounded-t-lg border-b-[5px] border-gold bg-base-300" data-open={i} data-full={p.full} aria-label={`${t.galleryOpen}: ${p.alt}`}>
                 <Image src={p.thumb} alt={p.alt} width={800} height={600} loading={i < 3 ? 'eager' : 'lazy'} class="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105" />
               </button>
             </li>

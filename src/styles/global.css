@@ -1,37 +1,37 @@
 @import 'tailwindcss';
 
-/* DaisyUI with one custom theme built from the crest colours. */
+/* DaisyUI with one custom theme built from the Futnet Italia / CSEN logo colours. */
 @plugin 'daisyui' {
   themes: false;
 }
 
 @plugin 'daisyui/theme' {
-  name: 'nac';
+  name: 'futnet';
   default: true;
   prefersdark: false;
   color-scheme: light;
 
   --color-base-100: #ffffff;
-  --color-base-200: #f4f5fa;
-  --color-base-300: #e4e8f2;
-  --color-base-content: #0b1440;
+  --color-base-200: #f3f5fa;
+  --color-base-300: #e2e8f3;
+  --color-base-content: #0e1c3a;
 
-  --color-primary: #0a1f6b; /* crest navy */
+  --color-primary: #22478a; /* logo blue */
   --color-primary-content: #ffffff;
-  --color-secondary: #c1232f; /* crest red */
+  --color-secondary: #c84333; /* logo red (buttons, date badges) */
   --color-secondary-content: #ffffff;
-  --color-accent: #1a3aa8;
+  --color-accent: #2a56a5;
   --color-accent-content: #ffffff;
-  --color-neutral: #0a1f6b;
+  --color-neutral: #22478a;
   --color-neutral-content: #ffffff;
 
-  --color-info: #1a3aa8;
+  --color-info: #2a56a5;
   --color-info-content: #ffffff;
-  --color-success: #1f7a4d;
+  --color-success: #3f8a45; /* logo green */
   --color-success-content: #ffffff;
   --color-warning: #b7791f;
   --color-warning-content: #ffffff;
-  --color-error: #c1232f;
+  --color-error: #c84333;
   --color-error-content: #ffffff;
 
   --radius-selector: 0.25rem;
@@ -45,6 +45,7 @@
 }
 
 @theme {
+  --color-gold: #bfa84f; /* logo gold: decorative lines only (too light for text) */
   --font-sans: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
 }

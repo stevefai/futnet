@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contactPaths, getUi, team } from '../content';
+import { contactPaths, getUi, site } from '../content';
 import { assetUrl } from '../lib/format';
 import type { Lang } from '../lib/types';
 import Header from './Header.astro';
@@ -14,9 +14,9 @@ const { lang } = Astro.props;
 const t = getUi(lang);
 
 const links = [
-  team.contact.email ? { label: 'Email', value: team.contact.email, href: `mailto:${team.contact.email}`, external: false } : null,
-  team.contact.facebook ? { label: 'Facebook', value: t.contactOpenPage, href: team.contact.facebook, external: true } : null,
-  team.contact.instagram ? { label: 'Instagram', value: t.contactOpenPage, href: team.contact.instagram, external: true } : null,
+  site.contact.email ? { label: 'Email', value: site.contact.email, href: `mailto:${site.contact.email}`, external: false } : null,
+  site.contact.facebook ? { label: 'Facebook', value: t.contactOpenPage, href: site.contact.facebook, external: true } : null,
+  site.contact.instagram ? { label: 'Instagram', value: t.contactOpenPage, href: site.contact.instagram, external: true } : null,
 ].filter((l) => l !== null);
 ---
 
@@ -39,7 +39,7 @@ const links = [
                     href={l.href}
                     target={l.external ? '_blank' : undefined}
                     rel={l.external ? 'noopener noreferrer' : undefined}
-                    class="block rounded-box border-b-[5px] border-secondary bg-base-100 p-6 hover:bg-base-200">
+                    class="block rounded-box border-b-[5px] border-gold bg-base-100 p-6 hover:bg-base-200">
                     <span class="block text-sm font-semibold uppercase tracking-[0.14em] text-base-content/60">{l.label}</span>
                     <span class="mt-1 block break-words font-display text-[24px] font-bold leading-tight">{l.value}</span>
                   </a>

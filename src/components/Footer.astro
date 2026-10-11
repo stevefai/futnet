@@ -1,5 +1,5 @@
 ---
-import { contactPaths, getText, getUi, team } from '../content';
+import { club, contactPaths, getText, getUi, site } from '../content';
 import { assetUrl } from '../lib/format';
 import type { Lang } from '../lib/types';
 
@@ -11,28 +11,38 @@ const { lang } = Astro.props;
 const t = getUi(lang);
 const copy = getText(lang);
 const year = new Date().getFullYear();
+const home = assetUrl(lang === 'it' ? '' : 'en/');
 
 const links = [
-  team.contact.email ? { label: team.contact.email, href: `mailto:${team.contact.email}`, external: false } : null,
-  team.contact.facebook ? { label: 'Facebook', href: team.contact.facebook, external: true } : null,
-  team.contact.instagram ? { label: 'Instagram', href: team.contact.instagram, external: true } : null,
+  site.contact.email ? { label: site.contact.email, href: `mailto:${site.contact.email}`, external: false } : null,
+  site.contact.facebook ? { label: 'Facebook', href: site.contact.facebook, external: true } : null,
+  site.contact.instagram ? { label: 'Instagram', href: site.contact.instagram, external: true } : null,
 ].filter((l): l is { label: string; href: string; external: boolean } => l !== null);
 ---
 
-<footer class="border-t-4 border-secondary bg-primary text-primary-content">
+<footer class="border-t-4 border-gold bg-primary text-primary-content">
   <div class="mx-auto max-w-[1200px] px-5 pb-8 pt-10 md:px-10 md:pt-16">
     <div class="flex flex-wrap gap-x-16 gap-y-10">
       <div class="flex min-w-0 flex-[1_1_320px] items-center gap-5">
-        <img src={assetUrl('crest.png')} alt={t.crestAlt} class="h-[72px] w-auto md:h-24" />
+        <img src={assetUrl(site.logo)} alt={t.logoAlt} class="h-[72px] w-auto md:h-24" />
         <div>
-          <p class="font-display text-[30px] font-bold uppercase leading-none tracking-wide md:text-[34px]">{team.name}</p>
+          <p class="font-display text-[30px] font-bold uppercase leading-none tracking-wide md:text-[34px]">{site.name}</p>
+          <p class="mt-1 font-display text-lg font-semibold uppercase tracking-wide text-gold">{site.subtitle}</p>
           <p class="mt-2 text-primary-content/80">{copy.footerLine}</p>
         </div>
       </div>
 
+      <div class="min-w-0 flex-[1_1_200px]">
+        <h2 class="text-sm font-semibold uppercase tracking-[0.14em] text-primary-content/80">{t.playersTitle}</h2>
+        <a href={`${home}#players`} class="mt-3 flex items-center gap-3 text-primary-content/80 hover:text-primary-content">
+          <img src={assetUrl(club.crest)} alt={t.crestAlt} class="h-12 w-auto" loading="lazy" />
+          <span class="font-display text-xl font-semibold uppercase tracking-wide">{club.name}</span>
+        </a>
+      </div>
+
       {
         links.length > 0 && (
-          <div class="min-w-0 flex-[1_1_240px]">
+          <div class="min-w-0 flex-[1_1_200px]">
             <h2 class="text-sm font-semibold uppercase tracking-[0.14em] text-primary-content/80">
               <a href={assetUrl(contactPaths[lang])} class="hover:text-primary-content hover:underline">{t.contact}</a>
             </h2>
@@ -50,6 +60,6 @@ const links = [
       }
     </div>
 
-    <p class="mt-8 text-[15px] text-primary-content/70">© {year} {team.name}</p>
+    <p class="mt-8 text-[15px] text-primary-content/70">© {year} {site.name}</p>
   </div>
 </footer>
