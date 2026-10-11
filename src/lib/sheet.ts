@@ -1,13 +1,13 @@
 /*
   Runs at BUILD time only (never in the visitor's browser).
-  Downloads the two published Google Sheet tabs, cleans them up and hands
-  plain data to the page. If no URLs are configured, it uses the sample CSVs
+  Downloads the published Google Sheet tab (posts), cleans it up and hands
+  plain data to the page. If no URL is configured, it uses the sample CSV
   in src/data so the site can be developed without the real sheet.
 */
 import Papa from 'papaparse';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import type { Player, Post, SiteData } from './types';
+import type { Post, SiteData } from './types';
 
 type Row = Record<string, string>;
 
@@ -109,30 +109,13 @@ function toPosts(rows: Row[]): Post[] {
   return posts.map(({ index: _index, ...post }) => post);
 }
 
-function toPlayers(rows: Row[]): Player[] {
-  return rows
-    .filter((r) => r.name)
-    .map((r, index) => ({
-      id: `player-${index}`,
-      number: r.number ?? '',
-      name: r.name,
-      role: { it: r.role_it || r.role_en || '', en: r.role_en || r.role_it || '' },
-      captain: isYes(r.captain, false),
-      photo: imageUrl(r.photo_url),
-    }));
-}
-
 let cached: Promise<SiteData> | null = null;
 
 /** Both language pages share one download per build. */
 export function loadSiteData(): Promise<SiteData> {
   if (!cached) {
     const postsUrl = process.env.POSTS_CSV_URL || import.meta.env.POSTS_CSV_URL;
-    const playersUrl = process.env.PLAYERS_CSV_URL || import.meta.env.PLAYERS_CSV_URL;
-    cached = Promise.all([
-      readCsv(postsUrl, 'posts.sample.csv'),
-      readCsv(playersUrl, 'players.sample.csv'),
-    ]).then(([postRows, playerRows]) => ({ posts: toPosts(postRows), players: toPlayers(playerRows) }));
+    cached = readCsv(postsUrl, 'posts.sample.csv').then((rows) => ({ posts: toPosts(rows) }));
   }
   return cached;
 }

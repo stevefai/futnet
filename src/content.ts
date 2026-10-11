@@ -1,17 +1,17 @@
 /*
   TEXTS THAT RARELY CHANGE (team description, history, contacts, labels).
   Anything in [square brackets] is a placeholder to replace.
-  News, events and players come from the Google Sheet, not from here.
+  News and events come from the Google Sheet; players are in src/data/players.ts.
 */
 import type { Lang } from './lib/types';
 
 export const team = {
   name: 'N.A.C. Curtatone',
   since: 1990,
-  // Leave a value empty ('') to hide that link in the footer.
+  // Leave a value empty ('') to hide that link on the contact page and in the footer.
   contact: {
     email: '',
-    facebook: '',
+    facebook: 'https://www.facebook.com/people/NAC-Curtatone-Futnet/100085691074140/',
     instagram: '',
   },
   timeline: [
@@ -21,6 +21,9 @@ export const team = {
     { year: '[ANNO]', it: '[Ultimo risultato importante]', en: '[Recent highlight]' },
   ],
 };
+
+/** Contact page address in each language, relative to the site base. */
+export const contactPaths = { it: 'contatti/', en: 'en/contact/' };
 
 const text = {
   it: {
@@ -67,6 +70,10 @@ const ui = {
     playersEmpty: 'Ancora nessun giocatore.',
     captain: 'Capitano',
     contact: 'Contatti',
+    contactIntro: 'Scrivici o seguici sui social: ti rispondiamo volentieri.',
+    contactEmpty: 'I nostri contatti arriveranno presto.',
+    contactBack: 'Torna alla home',
+    contactOpenPage: 'Apri la nostra pagina',
   },
   en: {
     navFeed: 'News & events',
@@ -93,6 +100,10 @@ const ui = {
     playersEmpty: 'No players yet.',
     captain: 'Captain',
     contact: 'Contact',
+    contactIntro: 'Write to us or follow us on social media – we are happy to hear from you.',
+    contactEmpty: 'Our contact details are coming soon.',
+    contactBack: 'Back to home',
+    contactOpenPage: 'Open our page',
   },
 };
 

@@ -1,26 +1,31 @@
 ---
-import { getUi } from '../content';
+import { contactPaths, getUi } from '../content';
 import { assetUrl } from '../lib/format';
 import type { Lang } from '../lib/types';
 import LangSwitch from './LangSwitch.astro';
 
 interface Props {
   lang: Lang;
+  page?: 'home' | 'contact';
 }
 
-const { lang } = Astro.props;
+const { lang, page = 'home' } = Astro.props;
 const t = getUi(lang);
+const itPath = page === 'contact' ? contactPaths.it : '';
+const enPath = page === 'contact' ? contactPaths.en : 'en/';
+const homePath = lang === 'it' ? '' : 'en/';
+const home = assetUrl(homePath);
 const links = [
-  { href: '#feed', label: t.navFeed },
-  { href: '#story', label: t.navStory },
-  { href: '#players', label: t.navPlayers },
-  { href: '#contact', label: t.navContact },
+  { href: `${home}#feed`, label: t.navFeed, current: false },
+  { href: `${home}#story`, label: t.navStory, current: false },
+  { href: `${home}#players`, label: t.navPlayers, current: false },
+  { href: assetUrl(contactPaths[lang]), label: t.navContact, current: page === 'contact' },
 ];
 ---
 
 <header class="sticky top-0 z-20 border-b-4 border-secondary bg-primary text-primary-content">
   <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-5 py-2.5 md:px-10 md:py-3">
-    <a href="#top" class="flex items-center gap-3">
+    <a href={home} class="flex items-center gap-3">
       <img src={assetUrl('crest.png')} alt={t.crestAlt} class="h-11 w-auto md:h-14" />
       <span class="font-display text-xl font-bold uppercase leading-[1.05] tracking-wide md:text-[26px]">
         N.A.C.<br />Curtatone
@@ -31,17 +36,17 @@ const links = [
     <nav class="hidden items-center gap-7 text-[17px] font-medium md:flex" aria-label="Main">
       {
         links.map((l) => (
-          <a href={l.href} class="text-primary-content/80 hover:text-primary-content">
+          <a href={l.href} aria-current={l.current ? 'page' : undefined} class:list={['text-primary-content/80 hover:text-primary-content', l.current && 'font-semibold !text-primary-content underline decoration-secondary decoration-2 underline-offset-8']}>
             {l.label}
           </a>
         ))
       }
-      <LangSwitch lang={lang} size="sm" />
+      <LangSwitch lang={lang} size="sm" itPath={itPath} enPath={enPath} />
     </nav>
 
     <!-- phone -->
     <div class="flex items-center gap-2.5 md:hidden">
-      <LangSwitch lang={lang} size="xs" />
+      <LangSwitch lang={lang} size="xs" itPath={itPath} enPath={enPath} />
       <details class="dropdown dropdown-end" data-nav-menu>
         <summary class="btn btn-square btn-ghost border border-primary-content/40 text-primary-content" aria-label={t.menu}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -52,7 +57,7 @@ const links = [
           {
             links.map((l) => (
               <li>
-                <a href={l.href} class="py-3 text-base">
+                <a href={l.href} aria-current={l.current ? 'page' : undefined} class:list={['py-3 text-base', l.current && 'font-semibold']}>
                   {l.label}
                 </a>
               </li>

@@ -21,7 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POSTS_CSV_URL: ${{ vars.POSTS_CSV_URL }}
-      PLAYERS_CSV_URL: ${{ vars.PLAYERS_CSV_URL }}
       SITE_URL: ${{ vars.SITE_URL }}
       BASE_PATH: ${{ vars.BASE_PATH }}
     steps:

@@ -6,9 +6,12 @@ import type { Lang } from '../lib/types';
 interface Props {
   lang: Lang;
   size?: 'xs' | 'sm';
+  /** Same page in each language, relative to the site base. */
+  itPath?: string;
+  enPath?: string;
 }
 
-const { lang, size = 'sm' } = Astro.props;
+const { lang, size = 'sm', itPath = '', enPath = 'en/' } = Astro.props;
 const t = getUi(lang);
 const sizeClass = size === 'xs' ? 'btn-xs min-w-10' : 'btn-sm min-w-11';
 const on = 'bg-primary-content text-primary hover:bg-primary-content';
@@ -17,13 +20,13 @@ const off = 'btn-ghost text-primary-content';
 
 <div class="join border border-primary-content/40 rounded-lg" role="group" aria-label={t.language}>
   <a
-    href={assetUrl('')}
+    href={assetUrl(itPath)}
     data-lang-link="it"
     aria-current={lang === 'it' ? 'true' : undefined}
     class:list={['btn join-item border-0', sizeClass, lang === 'it' ? on : off]}>IT</a
   >
   <a
-    href={assetUrl('en/')}
+    href={assetUrl(enPath)}
     data-lang-link="en"
     aria-current={lang === 'en' ? 'true' : undefined}
     class:list={['btn join-item border-0', sizeClass, lang === 'en' ? on : off]}>EN</a

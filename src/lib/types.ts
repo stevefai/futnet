@@ -20,16 +20,16 @@ export interface Post {
   poster: string;
 }
 
-export interface Player {
-  id: string;
+/** A player as written in src/data/players.ts */
+export interface PlayerInput {
   number: string;
   name: string;
   role: Localized;
-  captain: boolean;
-  photo: string;
+  captain?: boolean;
+  /** file name inside src/assets/players/ */
+  photo?: string;
 }
 
 export interface SiteData {
   posts: Post[];
-  players: Player[];
 }

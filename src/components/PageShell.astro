@@ -14,7 +14,7 @@ interface Props {
 }
 
 const { lang, autoRedirect = false } = Astro.props;
-const { posts, players } = await loadSiteData();
+const { posts } = await loadSiteData();
 ---
 
 <Layout lang={lang} autoRedirect={autoRedirect}>
@@ -23,7 +23,7 @@ const { posts, players } = await loadSiteData();
     <Hero lang={lang} />
     <Feed lang={lang} posts={posts} />
     <Story lang={lang} />
-    <Players lang={lang} players={players} />
+    <Players lang={lang} />
   </main>
   <Footer lang={lang} />
 </Layout>

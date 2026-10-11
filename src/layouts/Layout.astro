@@ -10,9 +10,14 @@ interface Props {
   lang: 'it' | 'en';
   /** Only the Italian home page (/) decides by browser language; /en/ never redirects. */
   autoRedirect?: boolean;
+  /** Path of this page in each language, relative to the site base (for hreflang / canonical). */
+  itPath?: string;
+  enPath?: string;
+  /** Page-specific part of the <title>; the team name is always appended. */
+  title?: string;
 }
 
-const { lang, autoRedirect = false } = Astro.props;
+const { lang, autoRedirect = false, itPath = '', enPath = 'en/', title } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
 
 const descriptions = {
@@ -20,9 +25,10 @@ const descriptions = {
   en: 'N.A.C. Curtatone – Futnet. News, events and players of the team.',
 };
 
+const pageTitle = title ? title + ' – N.A.C. Curtatone – Futnet' : 'N.A.C. Curtatone – Futnet';
 const site = Astro.site ? Astro.site.href.replace(/\/$/, '') : '';
-const itUrl = site ? site + base : '';
-const enUrl = site ? site + base + 'en/' : '';
+const itUrl = site ? site + base + itPath : '';
+const enUrl = site ? site + base + enPath : '';
 ---
 
 <!doctype html>
@@ -30,7 +36,7 @@ const enUrl = site ? site + base + 'en/' : '';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>N.A.C. Curtatone – Futnet</title>
+    <title>{pageTitle}</title>
     <meta name="description" content={descriptions[lang]} />
     <meta name="theme-color" content="#0A1F6B" />
     <link rel="icon" type="image/png" href={base + 'favicon.png'} />
@@ -38,7 +44,7 @@ const enUrl = site ? site + base + 'en/' : '';
     {enUrl && <link rel="alternate" hreflang="en" href={enUrl} />}
     {itUrl && <link rel="alternate" hreflang="x-default" href={itUrl} />}
     {itUrl && <link rel="canonical" href={lang === 'it' ? itUrl : enUrl} />}
-    <script is:inline define:vars={{ base, enabled: autoRedirect }}>
+    <script is:inline define:vars={{ base, enabled: autoRedirect, enPath }}>
       if (enabled) {
         try {
           var chosen = localStorage.getItem('site-lang');
@@ -52,7 +58,7 @@ const enUrl = site ? site + base + 'en/' : '';
               }
             }
           }
-          if (chosen === 'en') location.replace(base + 'en/' + location.hash);
+          if (chosen === 'en') location.replace(base + enPath + location.hash);
         } catch (e) {}
       }
     </script>

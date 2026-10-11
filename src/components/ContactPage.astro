@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { contactPaths, getUi, team } from '../content';
+import { assetUrl } from '../lib/format';
+import type { Lang } from '../lib/types';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getUi(lang);
+
+const links = [
+  team.contact.email ? { label: 'Email', value: team.contact.email, href: `mailto:${team.contact.email}`, external: false } : null,
+  team.contact.facebook ? { label: 'Facebook', value: t.contactOpenPage, href: team.contact.facebook, external: true } : null,
+  team.contact.instagram ? { label: 'Instagram', value: t.contactOpenPage, href: team.contact.instagram, external: true } : null,
+].filter((l) => l !== null);
+---
+
+<Layout lang={lang} title={t.contact} itPath={contactPaths.it} enPath={contactPaths.en}>
+  <Header lang={lang} page="contact" />
+  <main>
+    <section class="py-12 md:py-20">
+      <div class="mx-auto max-w-[1200px] px-5 md:px-10">
+        <h1 class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.contact}</h1>
+        <p class="mt-5 max-w-xl text-[#2A3560]">{t.contactIntro}</p>
+
+        {
+          links.length === 0 ? (
+            <p class="mt-8 rounded-box bg-base-100 p-6 text-base-content/60">{t.contactEmpty}</p>
+          ) : (
+            <ul class="mt-8 grid gap-4 sm:grid-cols-2 md:mt-12">
+              {links.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    target={l.external ? '_blank' : undefined}
+                    rel={l.external ? 'noopener noreferrer' : undefined}
+                    class="block rounded-box border-b-[5px] border-secondary bg-base-100 p-6 hover:bg-base-200">
+                    <span class="block text-sm font-semibold uppercase tracking-[0.14em] text-base-content/60">{l.label}</span>
+                    <span class="mt-1 block break-words font-display text-[24px] font-bold leading-tight">{l.value}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        <a href={assetUrl(lang === 'it' ? '' : 'en/')} class="btn btn-ghost mt-10 px-0">← {t.contactBack}</a>
+      </div>
+    </section>
+  </main>
+  <Footer lang={lang} />
+</Layout>
