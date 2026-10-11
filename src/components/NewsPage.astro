@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { loadSiteData } from '../lib/sheet';
+import { getUi, paths } from '../content';
+import type { Lang } from '../lib/types';
+import Header from './Header.astro';
+import Feed from './Feed.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getUi(lang);
+const { posts } = await loadSiteData();
+---
+
+<Layout lang={lang} title={t.feedTitle} itPath={paths.news.it} enPath={paths.news.en}>
+  <Header lang={lang} page="news" />
+  <main>
+    <Feed lang={lang} posts={posts} />
+  </main>
+  <Footer lang={lang} />
+</Layout>

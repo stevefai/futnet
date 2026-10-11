@@ -1,5 +1,5 @@
 ---
-import { club, getUi } from '../content';
+import { anchors, club, getUi } from '../content';
 import { assetUrl } from '../lib/format';
 import { Image } from 'astro:assets';
 import { players } from '../data/players';
@@ -16,7 +16,7 @@ const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/players/*
 const photoFor = (file?: string) => (file ? photos[`../assets/players/${file}`]?.default : undefined);
 ---
 
-<section id="players" class="py-12 md:py-20">
+<section id={anchors[lang].players} class="py-12 md:py-20">
   <div class="mx-auto max-w-[1200px] px-5 md:px-10">
     <h2 class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.playersTitle}</h2>
 

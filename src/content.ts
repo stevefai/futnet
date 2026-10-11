@@ -29,8 +29,18 @@ export const club = {
   crest: 'crest.png', // file in /public
 };
 
-/** Contact page address in each language, relative to the site base. */
-export const contactPaths = { it: 'contatti/', en: 'en/contact/' };
+/** Section names used in the address (#...) of the home page, per language. */
+export const anchors = {
+  it: { feed: 'novita', story: 'chi-siamo', gallery: 'foto', players: 'squadre' },
+  en: { feed: 'news', story: 'about', gallery: 'photos', players: 'teams' },
+};
+
+/** Address of each page in each language, relative to the site base. */
+export const paths = {
+  home: { it: '', en: 'en/' },
+  news: { it: 'novita/', en: 'en/news/' },
+  contact: { it: 'contatti/', en: 'en/contact/' },
+};
 
 const text = {
   it: {
@@ -67,6 +77,7 @@ const ui = {
     ctaPlayers: 'Conosci le squadre',
     feedTitle: 'Novità ed eventi',
     feedOlder: 'Mostra post precedenti',
+    feedAll: 'Tutte le novità ed eventi',
     feedEmpty: 'Ancora nessun post.',
     tagEvent: 'Evento',
     tagNews: 'Novità',
@@ -105,6 +116,7 @@ const ui = {
     ctaPlayers: 'Meet the teams',
     feedTitle: 'News & events',
     feedOlder: 'Show older posts',
+    feedAll: 'All news & events',
     feedEmpty: 'No posts yet.',
     tagEvent: 'Event',
     tagNews: 'News',

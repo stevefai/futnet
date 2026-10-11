@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contactPaths, getUi, site } from '../content';
+import { getUi, paths, site } from '../content';
 import { assetUrl } from '../lib/format';
 import type { Lang } from '../lib/types';
 import Header from './Header.astro';
@@ -20,7 +20,7 @@ const links = [
 ].filter((l) => l !== null);
 ---
 
-<Layout lang={lang} title={t.contact} itPath={contactPaths.it} enPath={contactPaths.en}>
+<Layout lang={lang} title={t.contact} itPath={paths.contact.it} enPath={paths.contact.en}>
   <Header lang={lang} page="contact" />
   <main>
     <section class="py-12 md:py-20">

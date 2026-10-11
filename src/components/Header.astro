@@ -1,26 +1,26 @@
 ---
-import { contactPaths, getUi, site } from '../content';
+import { anchors, getUi, paths, site } from '../content';
 import { assetUrl } from '../lib/format';
 import type { Lang } from '../lib/types';
 import LangSwitch from './LangSwitch.astro';
 
 interface Props {
   lang: Lang;
-  page?: 'home' | 'contact';
+  page?: 'home' | 'news' | 'contact';
 }
 
 const { lang, page = 'home' } = Astro.props;
 const t = getUi(lang);
-const itPath = page === 'contact' ? contactPaths.it : '';
-const enPath = page === 'contact' ? contactPaths.en : 'en/';
-const homePath = lang === 'it' ? '' : 'en/';
+const itPath = paths[page].it;
+const enPath = paths[page].en;
+const homePath = paths.home[lang];
 const home = assetUrl(homePath);
 const links = [
-  { href: `${home}#feed`, label: t.navFeed, current: false },
-  { href: `${home}#story`, label: t.navStory, current: false },
-  { href: `${home}#gallery`, label: t.navGallery, current: false },
-  { href: `${home}#players`, label: t.navPlayers, current: false },
-  { href: assetUrl(contactPaths[lang]), label: t.navContact, current: page === 'contact' },
+  { href: assetUrl(paths.news[lang]), label: t.navFeed, current: page === 'news' },
+  { href: `${home}#${anchors[lang].story}`, label: t.navStory, current: false },
+  { href: `${home}#${anchors[lang].gallery}`, label: t.navGallery, current: false },
+  { href: `${home}#${anchors[lang].players}`, label: t.navPlayers, current: false },
+  { href: assetUrl(paths.contact[lang]), label: t.navContact, current: page === 'contact' },
 ];
 ---
 
@@ -37,7 +37,7 @@ const links = [
     <nav class="hidden items-center gap-5 whitespace-nowrap text-[16px] font-medium md:flex lg:gap-7 lg:text-[17px]" aria-label="Main">
       {
         links.map((l) => (
-          <a href={l.href} aria-current={l.current ? 'page' : undefined} class:list={['text-primary-content/80 hover:text-primary-content', l.current && 'font-semibold !text-primary-content underline decoration-secondary decoration-2 underline-offset-8']}>
+          <a href={l.href} aria-current={l.current ? 'page' : undefined} class:list={['text-primary-content/80 hover:text-primary-content', l.current && 'font-semibold !text-primary-content underline decoration-primary-content decoration-2 underline-offset-8']}>
             {l.label}
           </a>
         ))

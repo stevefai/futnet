@@ -1,5 +1,5 @@
 ---
-import { getText, getUi, site } from '../content';
+import { anchors, getText, getUi, site } from '../content';
 import { assetUrl } from '../lib/format';
 import type { Lang } from '../lib/types';
 
@@ -27,9 +27,9 @@ const netGrid =
       </h1>
       <p class="mt-5 max-w-[520px] text-lg text-primary-content/80 md:mt-7 md:text-[21px]">{copy.tagline}</p>
       <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 md:mt-10">
-        <a href="#feed" class="btn btn-secondary btn-lg">{t.ctaFeed}</a>
+        <a href={`#${anchors[lang].feed}`} class="btn btn-secondary btn-lg">{t.ctaFeed}</a>
         <a
-          href="#players"
+          href={`#${anchors[lang].players}`}
           class="btn btn-lg btn-outline border-primary-content/60 text-primary-content hover:border-primary-content hover:bg-primary-content/10 hover:text-primary-content"
           >{t.ctaPlayers}</a
         >

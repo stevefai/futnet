@@ -22,7 +22,7 @@ const { posts } = await loadSiteData();
   <Header lang={lang} />
   <main>
     <Hero lang={lang} />
-    <Feed lang={lang} posts={posts} />
+    <Feed lang={lang} posts={posts} limit={2} />
     <Story lang={lang} />
     <Gallery lang={lang} />
     <Players lang={lang} />

@@ -1,29 +1,45 @@
 ---
-import { getUi } from '../content';
+import { anchors, getUi, paths } from '../content';
+import { assetUrl } from '../lib/format';
 import type { Lang, Post } from '../lib/types';
 import PostCard from './PostCard.astro';
 
 interface Props {
   lang: Lang;
   posts: Post[];
+  /** Home page: show only this many posts and a link to the full page. Leave out for the full list. */
+  limit?: number;
 }
 
 const PAGE_SIZE = 6;
-const { lang, posts } = Astro.props;
+const { lang, posts, limit } = Astro.props;
 const t = getUi(lang);
+
+const preview = limit !== undefined;
+const shown = preview ? posts.slice(0, limit) : posts;
+const Heading = preview ? 'h2' : 'h1';
 ---
 
-<section id="feed" class="py-12 md:py-20">
+<section id={anchors[lang].feed} class="py-12 md:py-20">
   <div class="mx-auto max-w-[1000px] px-5 md:px-10">
-    <h2 class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.feedTitle}</h2>
+    <Heading class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.feedTitle}</Heading>
 
     <div class="mt-6 flex flex-col gap-3.5 md:mt-10 md:gap-6">
       {posts.length === 0 && <p class="rounded-box bg-base-100 p-6 text-base-content/60">{t.feedEmpty}</p>}
-      {posts.map((post, i) => <PostCard post={post} lang={lang} extra={i >= PAGE_SIZE} />)}
+      {shown.map((post, i) => <PostCard post={post} lang={lang} extra={!preview && i >= PAGE_SIZE} />)}
     </div>
 
     {
-      posts.length > PAGE_SIZE && (
+      preview && posts.length > 0 && (
+        <div class="mt-8 flex justify-center">
+          <a href={assetUrl(paths.news[lang])} class="btn btn-outline btn-primary w-full sm:w-auto">
+            {t.feedAll}
+          </a>
+        </div>
+      )
+    }
+    {
+      !preview && posts.length > PAGE_SIZE && (
         <div class="mt-8 flex justify-center">
           <button type="button" class="btn btn-outline btn-primary w-full sm:w-auto" data-feed-more data-page-size={PAGE_SIZE} hidden>
             {t.feedOlder}

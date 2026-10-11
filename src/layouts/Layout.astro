@@ -5,6 +5,7 @@ import '@fontsource/barlow/latin-600.css';
 import '@fontsource/barlow-condensed/latin-600.css';
 import '@fontsource/barlow-condensed/latin-700.css';
 import '../styles/global.css';
+import { anchors } from '../content';
 
 interface Props {
   lang: 'it' | 'en';
@@ -45,7 +46,7 @@ const enUrl = site ? site + base + enPath : '';
     {enUrl && <link rel="alternate" hreflang="en" href={enUrl} />}
     {itUrl && <link rel="alternate" hreflang="x-default" href={itUrl} />}
     {itUrl && <link rel="canonical" href={lang === 'it' ? itUrl : enUrl} />}
-    <script is:inline define:vars={{ base, enabled: autoRedirect, enPath }}>
+    <script is:inline define:vars={{ base, enabled: autoRedirect, enPath, anchors }}>
       if (enabled) {
         try {
           var chosen = localStorage.getItem('site-lang');
@@ -59,15 +60,30 @@ const enUrl = site ? site + base + enPath : '';
               }
             }
           }
-          if (chosen === 'en') location.replace(base + enPath + location.hash);
+          if (chosen === 'en') {
+            // translate a section name such as #foto to #photos
+            var hash = location.hash;
+            for (var key in anchors.it) {
+              if (hash === '#' + anchors.it[key]) hash = '#' + anchors.en[key];
+            }
+            location.replace(base + enPath + hash);
+          }
         } catch (e) {}
       }
     </script>
   </head>
-  <body>
+  <body data-anchors={JSON.stringify(anchors)}>
     <slot />
 
     <script>
+      // 0) Remember the language of the page being read, so that links back to "/" do not
+      //    switch a visitor who is browsing the Italian pages to English (and the other way round).
+      try {
+        localStorage.setItem('site-lang', document.documentElement.lang);
+      } catch {
+        /* private mode: ignore */
+      }
+
       // 1) Language links: remember the choice and keep the #section in the address.
       document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
         link.addEventListener('click', () => {
@@ -76,7 +92,13 @@ const enUrl = site ? site + base + enPath : '';
           } catch {
             /* private mode: ignore */
           }
-          link.href = link.href.split('#')[0] + window.location.hash;
+          // keep the section in the address, translated to the other language (#foto <-> #photos)
+          const all = JSON.parse(document.body.dataset.anchors ?? '{}');
+          const from = all[document.documentElement.lang] ?? {};
+          const to = all[link.dataset.langLink ?? ''] ?? {};
+          const hash = window.location.hash;
+          const key = Object.keys(from).find((k) => '#' + from[k] === hash);
+          link.href = link.href.split('#')[0] + (key ? '#' + to[key] : hash);
         });
       });
 
