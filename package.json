@@ -1,0 +1,24 @@
+{
+  "name": "futnet-site",
+  "type": "module",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource/barlow": "^5.0.0",
+    "@fontsource/barlow-condensed": "^5.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "astro": "^5.2.0",
+    "daisyui": "^5.0.0",
+    "papaparse": "^5.4.1",
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.0",
+    "typescript": "^5.5.0"
+  }
+}

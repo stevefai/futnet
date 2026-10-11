@@ -1,0 +1,12 @@
+published,type,posted,title_it,title_en,text_it,text_en,event_date,event_time,place,link,poster_url
+yes,event,2026-10-08,[Nome torneo],[Tournament name],"[Due righe sull'evento.]
+[Seconda riga.]","[Two lines about the event.]
+[Second line.]",2026-10-24,15:00,"[Luogo, Città]",https://www.facebook.com/,
+yes,news,2026-10-02,[Titolo della notizia],[News headline],[Breve riassunto della notizia.],[Short summary of the news item.],,,,,
+yes,event,2026-09-20,[Nome evento],[Event name],[Descrizione breve.],[Short description.],2026-10-03,10:30,"[Luogo, Città]",https://example.com/,
+no,news,2026-09-18,[Bozza non pubblicata],[Unpublished draft],"[Questa riga ha published = no, quindi non appare.]","[This row has published = no, so it does not appear.]",,,,,
+yes,event,2026-09-10,[Post precedente 1],[Older post 1],[Testo di esempio.],[Sample text.],2026-09-10,18:00,"[Luogo, Città]",,
+yes,news,2026-09-01,[Post precedente 2],[Older post 2],[Testo di esempio.],[Sample text.],,,,,
+yes,event,2026-08-20,[Post precedente 3],[Older post 3],[Testo di esempio.],[Sample text.],2026-08-20,18:00,"[Luogo, Città]",,
+yes,news,2026-08-05,[Post precedente 4],[Older post 4],[Testo di esempio.],[Sample text.],,,,,
+yes,event,2026-07-18,[Post precedente 5],[Older post 5],[Testo di esempio.],[Sample text.],2026-07-18,18:00,"[Luogo, Città]",,

@@ -1,0 +1,50 @@
+---
+import { getUi } from '../content';
+import type { Lang, Player } from '../lib/types';
+
+interface Props {
+  lang: Lang;
+  players: Player[];
+}
+
+const { lang, players } = Astro.props;
+const t = getUi(lang);
+---
+
+<section id="players" class="py-12 md:py-20">
+  <div class="mx-auto max-w-[1200px] px-5 md:px-10">
+    <h2 class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.playersTitle}</h2>
+
+    {
+      players.length === 0 ? (
+        <p class="mt-8 rounded-box bg-base-100 p-6 text-base-content/60">{t.playersEmpty}</p>
+      ) : (
+        <div class="mt-7 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:mt-12 md:gap-x-6 md:gap-y-8 lg:grid-cols-4">
+          {players.map((player) => (
+            <div>
+              <div class="relative aspect-square overflow-hidden rounded-t-lg border-b-[5px] border-secondary bg-base-300">
+                {player.photo && (
+                  <img src={player.photo} alt={player.name} loading="lazy" referrerpolicy="no-referrer" class="absolute inset-0 h-full w-full object-cover" />
+                )}
+                {player.number && (
+                  <span
+                    class:list={[
+                      'absolute bottom-3 left-3.5 font-display text-[44px] font-bold leading-[0.9] sm:text-6xl',
+                      player.photo ? 'text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]' : 'text-[#8E9BC2]',
+                    ]}>
+                    {player.number}
+                  </span>
+                )}
+                {player.captain && (
+                  <span class="badge badge-primary absolute right-3 top-3 font-semibold uppercase tracking-wider">{t.captain}</span>
+                )}
+              </div>
+              <h3 class="mt-2.5 font-display text-[22px] font-bold uppercase leading-[1.1] sm:mt-3.5 sm:text-[26px]">{player.name}</h3>
+              {player.role[lang] && <p class="text-[15px] text-base-content/60 sm:text-base">{player.role[lang]}</p>}
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

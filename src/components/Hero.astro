@@ -1,0 +1,44 @@
+---
+import { getText, getUi } from '../content';
+import { assetUrl } from '../lib/format';
+import type { Lang } from '../lib/types';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getUi(lang);
+const copy = getText(lang);
+
+const netGrid =
+  'repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 32px), repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 32px)';
+---
+
+<section id="top" class="bg-primary text-primary-content" style={`background-image: ${netGrid}`}>
+  <div class="mx-auto flex max-w-[1200px] flex-col items-stretch gap-8 px-5 py-10 md:flex-row md:items-center md:justify-between md:gap-14 md:px-10 md:py-20">
+    <div class="min-w-0 flex-1 md:order-1">
+      <div class="h-[5px] w-14 bg-secondary"></div>
+      <p class="mt-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-primary-content/80 md:mt-4 md:text-base">
+        {t.eyebrow}
+      </p>
+      <h1 class="mt-3 font-display text-[clamp(52px,8vw,104px)] font-bold uppercase leading-[0.95] md:mt-4">
+        N.A.C.<br />Curtatone
+      </h1>
+      <p class="mt-5 max-w-[520px] text-lg text-primary-content/80 md:mt-7 md:text-[21px]">{copy.tagline}</p>
+      <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 md:mt-10">
+        <a href="#feed" class="btn btn-secondary btn-lg">{t.ctaFeed}</a>
+        <a
+          href="#players"
+          class="btn btn-lg btn-outline border-primary-content/60 text-primary-content hover:border-primary-content hover:bg-primary-content/10 hover:text-primary-content"
+          >{t.ctaPlayers}</a
+        >
+      </div>
+    </div>
+
+    <!-- on phones the crest comes first -->
+    <div class="order-first flex justify-center md:order-2 md:flex-[0_1_400px]">
+      <img src={assetUrl('crest.png')} alt={t.crestAlt} class="h-auto w-[200px] drop-shadow-2xl md:w-[380px]" />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,35 @@
+---
+import { getUi } from '../content';
+import type { Lang, Post } from '../lib/types';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  lang: Lang;
+  posts: Post[];
+}
+
+const PAGE_SIZE = 6;
+const { lang, posts } = Astro.props;
+const t = getUi(lang);
+---
+
+<section id="feed" class="py-12 md:py-20">
+  <div class="mx-auto max-w-[1000px] px-5 md:px-10">
+    <h2 class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.feedTitle}</h2>
+
+    <div class="mt-6 flex flex-col gap-3.5 md:mt-10 md:gap-6">
+      {posts.length === 0 && <p class="rounded-box bg-base-100 p-6 text-base-content/60">{t.feedEmpty}</p>}
+      {posts.map((post, i) => <PostCard post={post} lang={lang} extra={i >= PAGE_SIZE} />)}
+    </div>
+
+    {
+      posts.length > PAGE_SIZE && (
+        <div class="mt-8 flex justify-center">
+          <button type="button" class="btn btn-outline btn-primary w-full sm:w-auto" data-feed-more data-page-size={PAGE_SIZE} hidden>
+            {t.feedOlder}
+          </button>
+        </div>
+      )
+    }
+  </div>
+</section>

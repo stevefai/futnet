@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { loadSiteData } from '../lib/sheet';
+import Header from './Header.astro';
+import Hero from './Hero.astro';
+import Feed from './Feed.astro';
+import Story from './Story.astro';
+import Players from './Players.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  lang: 'it' | 'en';
+  autoRedirect?: boolean;
+}
+
+const { lang, autoRedirect = false } = Astro.props;
+const { posts, players } = await loadSiteData();
+---
+
+<Layout lang={lang} autoRedirect={autoRedirect}>
+  <Header lang={lang} />
+  <main>
+    <Hero lang={lang} />
+    <Feed lang={lang} posts={posts} />
+    <Story lang={lang} />
+    <Players lang={lang} players={players} />
+  </main>
+  <Footer lang={lang} />
+</Layout>

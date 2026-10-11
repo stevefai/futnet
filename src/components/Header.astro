@@ -1,0 +1,65 @@
+---
+import { getUi } from '../content';
+import { assetUrl } from '../lib/format';
+import type { Lang } from '../lib/types';
+import LangSwitch from './LangSwitch.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getUi(lang);
+const links = [
+  { href: '#feed', label: t.navFeed },
+  { href: '#story', label: t.navStory },
+  { href: '#players', label: t.navPlayers },
+  { href: '#contact', label: t.navContact },
+];
+---
+
+<header class="sticky top-0 z-20 border-b-4 border-secondary bg-primary text-primary-content">
+  <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-5 py-2.5 md:px-10 md:py-3">
+    <a href="#top" class="flex items-center gap-3">
+      <img src={assetUrl('crest.png')} alt={t.crestAlt} class="h-11 w-auto md:h-14" />
+      <span class="font-display text-xl font-bold uppercase leading-[1.05] tracking-wide md:text-[26px]">
+        N.A.C.<br />Curtatone
+      </span>
+    </a>
+
+    <!-- desktop -->
+    <nav class="hidden items-center gap-7 text-[17px] font-medium md:flex" aria-label="Main">
+      {
+        links.map((l) => (
+          <a href={l.href} class="text-primary-content/80 hover:text-primary-content">
+            {l.label}
+          </a>
+        ))
+      }
+      <LangSwitch lang={lang} size="sm" />
+    </nav>
+
+    <!-- phone -->
+    <div class="flex items-center gap-2.5 md:hidden">
+      <LangSwitch lang={lang} size="xs" />
+      <details class="dropdown dropdown-end" data-nav-menu>
+        <summary class="btn btn-square btn-ghost border border-primary-content/40 text-primary-content" aria-label={t.menu}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+          </svg>
+        </summary>
+        <ul class="menu dropdown-content z-30 mt-3 w-64 rounded-box bg-primary p-2 text-primary-content shadow-lg">
+          {
+            links.map((l) => (
+              <li>
+                <a href={l.href} class="py-3 text-base">
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,97 @@
+---
+import '@fontsource/barlow/latin-400.css';
+import '@fontsource/barlow/latin-500.css';
+import '@fontsource/barlow/latin-600.css';
+import '@fontsource/barlow-condensed/latin-600.css';
+import '@fontsource/barlow-condensed/latin-700.css';
+import '../styles/global.css';
+
+interface Props {
+  lang: 'it' | 'en';
+  /** Only the Italian home page (/) decides by browser language; /en/ never redirects. */
+  autoRedirect?: boolean;
+}
+
+const { lang, autoRedirect = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+
+const descriptions = {
+  it: 'N.A.C. Curtatone – Futnet. Novità, eventi e giocatori della squadra.',
+  en: 'N.A.C. Curtatone – Futnet. News, events and players of the team.',
+};
+
+const site = Astro.site ? Astro.site.href.replace(/\/$/, '') : '';
+const itUrl = site ? site + base : '';
+const enUrl = site ? site + base + 'en/' : '';
+---
+
+<!doctype html>
+<html lang={lang} data-theme="nac">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>N.A.C. Curtatone – Futnet</title>
+    <meta name="description" content={descriptions[lang]} />
+    <meta name="theme-color" content="#0A1F6B" />
+    <link rel="icon" type="image/png" href={base + 'favicon.png'} />
+    {itUrl && <link rel="alternate" hreflang="it" href={itUrl} />}
+    {enUrl && <link rel="alternate" hreflang="en" href={enUrl} />}
+    {itUrl && <link rel="alternate" hreflang="x-default" href={itUrl} />}
+    {itUrl && <link rel="canonical" href={lang === 'it' ? itUrl : enUrl} />}
+    <script is:inline define:vars={{ base, enabled: autoRedirect }}>
+      if (enabled) {
+        try {
+          var chosen = localStorage.getItem('site-lang');
+          if (!chosen) {
+            var list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+            for (var i = 0; i < list.length; i++) {
+              var code = String(list[i] || '').toLowerCase().slice(0, 2);
+              if (code === 'it' || code === 'en') {
+                chosen = code;
+                break;
+              }
+            }
+          }
+          if (chosen === 'en') location.replace(base + 'en/' + location.hash);
+        } catch (e) {}
+      }
+    </script>
+  </head>
+  <body>
+    <slot />
+
+    <script>
+      // 1) Language links: remember the choice and keep the #section in the address.
+      document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
+        link.addEventListener('click', () => {
+          try {
+            localStorage.setItem('site-lang', link.dataset.langLink ?? '');
+          } catch {
+            /* private mode: ignore */
+          }
+          link.href = link.href.split('#')[0] + window.location.hash;
+        });
+      });
+
+      // 2) Phone menu: close it after tapping a link.
+      document.querySelectorAll<HTMLElement>('[data-nav-menu] a').forEach((link) => {
+        link.addEventListener('click', () => {
+          link.closest('details')?.removeAttribute('open');
+        });
+      });
+
+      // 3) "Show older posts": the page ships with every post; extras start hidden.
+      const moreButton = document.querySelector<HTMLButtonElement>('[data-feed-more]');
+      if (moreButton) {
+        const pageSize = Number(moreButton.dataset.pageSize ?? '6');
+        const extras = Array.from(document.querySelectorAll<HTMLElement>('[data-extra]'));
+        extras.forEach((el) => (el.hidden = true));
+        moreButton.hidden = false;
+        moreButton.addEventListener('click', () => {
+          extras.splice(0, pageSize).forEach((el) => (el.hidden = false));
+          if (extras.length === 0) moreButton.hidden = true;
+        });
+      }
+    </script>
+  </body>
+</html>
