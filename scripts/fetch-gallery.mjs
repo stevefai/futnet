@@ -1,7 +1,7 @@
 /*
   Runs before `npm run dev` and `npm run build` (see package.json).
   Downloads the photos of the Google Drive folder (through the Apps Script in
-  apps-script/gallery.gs) into src/assets/gallery/ as drive-001-*.jpg, drive-002-*.jpg ...
+  apps-script/site.gs) into src/assets/gallery/ as drive-001-*.jpg, drive-002-*.jpg ...
   Those files are not committed (.gitignore). Photos you add to that folder by hand are left alone.
   Without PHOTOS_API_URL it does nothing, so the site still builds on any computer.
 */

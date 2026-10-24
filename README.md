@@ -67,7 +67,7 @@ Google Apps Script, protected by a secret token, hands the photos to the build.
 **One-time setup**
 
 1. Make a long random token. In a terminal: `openssl rand -hex 24` (copy the result).
-2. Go to <https://script.google.com> > **New project**. Delete the sample code and paste the whole of `apps-script/gallery.gs`.
+2. Go to <https://script.google.com> > **New project**. Delete the sample code and paste the whole of `apps-script/site.gs`.
    Replace `PASTE_A_LONG_RANDOM_TEXT_HERE` with the token. Check `FOLDER_ID` is the id of your photo folder
    (the last part of the folder address).
 3. **Deploy > New deployment** > type **Web app** > Execute as **Me** > Who has access **Anyone** > Deploy.
