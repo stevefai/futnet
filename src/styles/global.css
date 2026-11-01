@@ -214,3 +214,30 @@ summary::-webkit-details-marker {
     margin: 0;
   }
 }
+
+/* Top of a post page without a picture: navy header with the grid of the home page and the shield as a watermark */
+.post-head {
+  position: relative;
+  overflow: hidden;
+  color: var(--color-primary-content);
+  border-bottom: 5px solid var(--color-gold);
+  background-color: var(--color-primary);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 32px);
+}
+.post-head::after {
+  content: '';
+  position: absolute;
+  right: 4%;
+  top: -10%;
+  height: 120%;
+  aspect-ratio: 0.66;
+  background: var(--logo) center / contain no-repeat;
+  opacity: 0.14;
+  pointer-events: none;
+}
+.post-head > * {
+  position: relative;
+  z-index: 1;
+}
