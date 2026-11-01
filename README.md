@@ -1,10 +1,11 @@
 # Futnet Italia – Calcio Tenis website
 
-Astro + Tailwind CSS + DaisyUI (no React, almost no JavaScript in the browser). News and events are typed into a **Google Sheet**; the site reads the sheet
-when it is built and rebuilds itself automatically every 30 minutes (or instantly with one click).
+Astro + Tailwind CSS + DaisyUI (no React, almost no JavaScript in the browser). News and events are written as **Google Docs** and the
+carousel photos are put in a **Google Drive folder**; the site reads them when it is built and rebuilds itself automatically every
+30 minutes (or instantly with one click).
 
 ```
-Google Sheet  ->  (GitHub Action every 30 min)  ->  Astro build  ->  GitHub Pages
+Google Drive (Docs + photos)  ->  Apps Script  ->  (GitHub Action every 30 min)  ->  Astro build  ->  GitHub Pages
 ```
 
 ## 1. Run it on your computer
@@ -14,81 +15,71 @@ npm install
 npm run dev        # http://localhost:4321  (Italian)   /en/  (English)
 ```
 
-With no sheet connected it shows the sample data in `src/data/*.sample.csv`.
+Without Google Drive connected it shows the sample news in `src/data/news.sample.json` and no carousel photos.
+To use the real content, copy `.env.example` to `.env` and fill in `PHOTOS_API_URL` and `PHOTOS_API_TOKEN` (see below).
 
-## 2. Create the Google Sheet (one tab)
+## 2. Content from Google Drive
 
-**Tab `posts`** – one row per news item or event. Newest first is automatic (sorted by `posted`).
+Everything comes through one small Google Apps Script (`apps-script/site.gs`) that runs in your Google account, reads two
+**private** Drive folders and answers only requests that carry a secret token.
 
-| column | what to type | required |
+| what | where | how it appears |
 |---|---|---|
-| `published` | `yes` / `no` (empty = yes). Use `no` for drafts | no |
-| `type` | `event` or `news` | yes |
-| `posted` | date you post it, `2026-10-31` (also accepts `31/10/2026`) | yes |
-| `title_it`, `title_en` | title in each language (if one is empty, the other is used) | one of them |
-| `text_it`, `text_en` | short text; line breaks are kept | no |
-| `event_date` | events only: `2026-10-24` | no |
-| `event_time` | events only: `15:00` | no |
-| `place` | events only: venue, city | no |
-| `link` | Facebook event or any `https://` page | no |
-| `poster_url` | image link, or a Google Drive "Anyone with the link" share link | no |
+| News & events | Drive folder of Google Docs, one Doc per post | a preview card + its own page (`/novita/...`, `/en/news/...`) |
+| Carousel photos | Drive folder of JPG/PNG/WebP/AVIF files | the "Photos" section |
 
-Tips: format the date columns as **Plain text** so Google does not reformat them. Start from
-`src/data/posts.sample.csv` (File > Import) to get the right headers.
+### Writing a news item or event
 
-## 3. Publish each tab and copy its link
+Open the Doc called **MODEL** in the news folder, make a copy (it stays in the same folder), rename it and fill it in.
+The full rules are in `apps-script/NEWS-TEMPLATE.md`; in short:
 
-For the `posts` tab: *File > Share > Publish to web* -> choose that tab -> choose **Comma-separated values (.csv)** ->
-Publish -> copy the link. (Anyone with the link can read published tabs, so keep private data out of the sheet.)
+- The newest Doc (by creation date) is shown first.
+- A post with an **event date** in the small table is an event; without one it is news (delete the table).
+- Text in an "Italiano" and an "English" section (Heading 1), title as Heading 2. A missing language shows the other one.
+- One photo anywhere in the Doc. Bold, italic, links and lists are kept.
+- To hide a post, move its Doc out of the folder (e.g. into a subfolder).
 
-For local testing, copy `.env.example` to `.env` and paste the link.
-
-## 4. Put it online (GitHub Pages)
-
-1. Create a GitHub repository and push this folder (branch `main`).
-2. Repository **Settings > Pages > Build and deployment > Source: GitHub Actions**.
-3. Repository **Settings > Secrets and variables > Actions > Variables**, add:
-   - `POSTS_CSV_URL` – link of the posts tab
-   - `BASE_PATH` – `/<repository-name>/` while using the github.io address (remove it when the domain is connected)
-   - `SITE_URL` – the full address, e.g. `https://<user>.github.io/<repository-name>` (later `https://futnetitalia.it`)
-4. The **Actions** tab runs "Build and deploy" on every push, every 30 minutes, and on the **Run workflow** button.
-
-If the sheet link breaks, the build **fails on purpose** and the previously published site stays online.
-
-> GitHub switches off scheduled runs in public repositories after ~60 days without any repository activity.
-> If new rows stop appearing, open Actions and re-enable the workflow (or push any small change).
-
-## Photos from Google Drive
-
-The photo carousel shows every JPG/PNG/WebP/AVIF in one Google Drive folder. Anyone with edit access to the folder
-can add photos; they appear on the site at the next rebuild (within 30 minutes). The folder stays private: a small
-Google Apps Script, protected by a secret token, hands the photos to the build.
-
-**One-time setup**
+### One-time setup
 
 1. Make a long random token. In a terminal: `openssl rand -hex 24` (copy the result).
 2. Go to <https://script.google.com> > **New project**. Delete the sample code and paste the whole of `apps-script/site.gs`.
-   Replace `PASTE_A_LONG_RANDOM_TEXT_HERE` with the token. Check `FOLDER_ID` is the id of your photo folder
-   (the last part of the folder address).
+   Replace `PASTE_A_LONG_RANDOM_TEXT_HERE` with the token. Check `PHOTOS_FOLDER_ID` and `NEWS_FOLDER_ID` are the ids of your
+   two folders (the last part of each folder address).
 3. **Deploy > New deployment** > type **Web app** > Execute as **Me** > Who has access **Anyone** > Deploy.
    Approve the permission request (Google warns the app is unverified: *Advanced > Go to ... (unsafe)* - it is your own script).
    Copy the **Web app URL** (ends in `/exec`).
-4. GitHub repository > Settings > Secrets and variables > Actions:
-   - **Variables** tab: `PHOTOS_API_URL` = the web app URL
-   - **Secrets** tab: `PHOTOS_API_TOKEN` = the token
-5. Run the workflow once (Actions > Build and deploy > Run workflow).
+4. Still in the editor: choose the function **authorize** in the dropdown above the code and press **Run**. Google asks for
+   permission to read your Drive files and Google Docs: allow it (Advanced > Go to ... (unsafe) > Allow). Without this the
+   news cannot be read. Then **Deploy > Manage deployments > Edit > New version > Deploy** again.
+5. Check it: open `<web app URL>?token=<token>&news=list` in a browser; you should see your Docs listed.
+6. Put it online (next section) and add the two values to GitHub.
 
 For local testing put the same two values in `.env` (`PHOTOS_API_URL`, `PHOTOS_API_TOKEN`).
 
-**Good to know**
+### Good to know
 
 - Photos are ordered newest upload first. Removing a photo from the folder removes it from the site.
 - iPhone HEIC photos are ignored (the build prints a warning); export them as JPG first.
 - Changed the script code? Use **Deploy > Manage deployments > Edit > New version**; the URL stays the same.
-- If the URL or token is wrong the build **fails on purpose** and the previous site stays online.
+- If the URL or token is wrong the build **fails on purpose** and the previous site stays online. A single broken Doc or
+  photo is skipped with a warning in the build log (Actions > the run > "Run npm run build").
 - Photos you put by hand in `src/assets/gallery/` also appear; only files starting with `drive-` are replaced at every build.
 
-## 5. Custom domain (later)
+## 3. Put it online (GitHub Pages)
+
+1. Create a GitHub repository and push this folder (branch `main`).
+2. Repository **Settings > Pages > Build and deployment > Source: GitHub Actions**.
+3. Repository **Settings > Secrets and variables > Actions**:
+   - **Variables** tab: `PHOTOS_API_URL` – the Apps Script web app URL
+   - **Secrets** tab: `PHOTOS_API_TOKEN` – the token
+   - **Variables** tab: `BASE_PATH` – `/<repository-name>/` while using the github.io address (remove it when the domain is connected)
+   - **Variables** tab: `SITE_URL` – the full address, e.g. `https://<user>.github.io/<repository-name>` (later `https://futnetitalia.it`)
+4. The **Actions** tab runs "Build and deploy" on every push, every 30 minutes, and on the **Run workflow** button.
+
+> GitHub switches off scheduled runs in public repositories after ~60 days without any repository activity.
+> If new posts stop appearing, open Actions and re-enable the workflow (or push any small change).
+
+## 4. Custom domain (later)
 
 Buy the domain, then Settings > Pages > Custom domain, and add the DNS records GitHub shows.
 Remove the `BASE_PATH` variable and set `SITE_URL` to the new address.
@@ -110,13 +101,12 @@ Remove the `BASE_PATH` variable and set `SITE_URL` to the new address.
 | fonts | `src/styles/global.css` (`@theme`) and the `@fontsource` imports in `src/layouts/Layout.astro` |
 | layout of a section | `src/components/*.astro` (Tailwind and DaisyUI classes) |
 | the few lines of browser JavaScript (phone menu, language links, "Show older posts") | bottom of `src/layouts/Layout.astro` |
-| news / events | the Google Sheet |
+| news / events | Google Docs in the Drive news folder |
 | players and their photos | `src/data/players.ts`; photos go in `src/assets/players/` |
-| the photo carousel | the Google Drive folder (see "Photos from Google Drive") |
+| the photo carousel | the Google Drive photo folder |
 
-## Optional: publish instantly after editing the sheet
+## Optional: publish instantly after editing
 
-In the sheet: *Extensions > Apps Script*, add a function that calls
-`POST https://api.github.com/repos/<user>/<repo>/actions/workflows/deploy.yml/dispatches` with
-`{"ref":"main"}` and a fine-grained GitHub token (Actions: write), and attach it to a time-driven or on-change
-trigger. This is only worth it if a 30 minute delay is too slow.
+To avoid the 30 minute wait, run the workflow by hand (Actions > Build and deploy > Run workflow), or add a function to the Apps Script
+that calls `POST https://api.github.com/repos/<user>/<repo>/actions/workflows/deploy.yml/dispatches` with
+`{"ref":"main"}` and a fine-grained GitHub token (Actions: write). This is only worth it if a 30 minute delay is too slow.

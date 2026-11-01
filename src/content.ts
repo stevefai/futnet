@@ -1,7 +1,7 @@
 /*
   TEXTS THAT RARELY CHANGE (site description, history, contacts, labels).
   Anything in [square brackets] is a placeholder to replace.
-  News and events come from the Google Sheet; the team's players are in src/data/players.ts.
+  News and events come from Google Docs (Drive); the team's players are in src/data/players.ts.
 */
 import type { Lang } from './lib/types';
 
@@ -42,6 +42,9 @@ export const paths = {
   contact: { it: 'contatti/', en: 'en/contact/' },
 };
 
+/** Address of one news / event post page. */
+export const postPath = (lang: 'it' | 'en', slug: string) => `${paths.news[lang]}${slug}/`;
+
 const text = {
   it: {
     tagline: '[Una o due frasi su Futnet Italia: cos\'è il Calcio Tenis e a chi è rivolto.]',
@@ -78,6 +81,8 @@ const ui = {
     feedTitle: 'Novità ed eventi',
     feedOlder: 'Mostra post precedenti',
     feedAll: 'Tutte le novità ed eventi',
+    postBack: 'Tutte le novità ed eventi',
+    eventDetails: 'Dettagli dell\'evento',
     feedEmpty: 'Ancora nessun post.',
     tagEvent: 'Evento',
     tagNews: 'Novità',
@@ -117,6 +122,8 @@ const ui = {
     feedTitle: 'News & events',
     feedOlder: 'Show older posts',
     feedAll: 'All news & events',
+    postBack: 'All news & events',
+    eventDetails: 'Event details',
     feedEmpty: 'No posts yet.',
     tagEvent: 'Event',
     tagNews: 'News',

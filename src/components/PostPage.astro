@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import { getUi, postPath } from '../content';
+import { assetUrl, formatDate } from '../lib/format';
+import { newsImage } from '../lib/news-images';
+import { blocksToHtml } from '../lib/rich';
+import type { Lang, Post } from '../lib/types';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  lang: Lang;
+  post: Post;
+}
+
+const { lang, post } = Astro.props;
+const t = getUi(lang);
+const isEvent = post.type === 'event';
+const image = newsImage(post.image);
+const html = blocksToHtml(post.body[lang]);
+const posted = post.posted ? formatDate(post.posted, lang, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+const date = post.eventDate ? formatDate(post.eventDate, lang, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
+const details = [date, post.eventTime, post.place].filter(Boolean);
+
+let isFacebook = false;
+try {
+  const host = new URL(post.link).hostname.toLowerCase();
+  isFacebook = host.endsWith('facebook.com') || host === 'fb.me' || host.endsWith('fb.com');
+} catch {
+  isFacebook = false;
+}
+const actionLabel = isFacebook ? t.viewFacebook : t.moreInfo;
+const back = assetUrl(lang === 'it' ? 'novita/' : 'en/news/');
+---
+
+<Layout lang={lang} title={post.title[lang]} itPath={postPath('it', post.slug.it)} enPath={postPath('en', post.slug.en)}>
+  <Header lang={lang} page="news" itPath={postPath('it', post.slug.it)} enPath={postPath('en', post.slug.en)} />
+  <main>
+    <article class="py-10 md:py-16">
+      <div class="mx-auto max-w-[800px] px-5 md:px-10">
+        <a href={back} class="btn btn-ghost -ml-3 mb-4">← {t.postBack}</a>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <span class:list={['badge font-semibold uppercase tracking-wider', isEvent ? 'badge-secondary' : 'badge-primary']}>
+            {isEvent ? t.tagEvent : t.tagNews}
+          </span>
+          {posted && <span class="text-[15px] font-semibold text-base-content/60">{t.posted} {posted}</span>}
+        </div>
+
+        <h1 class="mt-3 font-display text-[40px] font-bold uppercase leading-[1.02] md:text-[60px]">{post.title[lang]}</h1>
+
+        {
+          isEvent && details.length > 0 && (
+            <div class="mt-6 rounded-box border-l-[6px] border-secondary bg-base-100 p-5">
+              <p class="text-sm font-semibold uppercase tracking-[0.14em] text-base-content/60">{t.eventDetails}</p>
+              <ul class="mt-2 space-y-1 text-[17px] font-semibold md:text-lg">
+                {details.map((d) => <li>{d}</li>)}
+              </ul>
+            </div>
+          )
+        }
+
+        {image && <Image src={image} alt="" width={1400} class="mt-6 h-auto w-full rounded-box" />}
+
+        <div class="post-body mt-8" set:html={html} />
+
+        {
+          post.link && (
+            <a href={post.link} target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-8">
+              {actionLabel}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17L17 7M8 7h9v9" />
+              </svg>
+            </a>
+          )
+        }
+      </div>
+    </article>
+  </main>
+  <Footer lang={lang} />
+</Layout>

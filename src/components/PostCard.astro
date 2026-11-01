@@ -1,6 +1,8 @@
 ---
-import { getUi } from '../content';
+import { getImage } from 'astro:assets';
+import { getUi, postPath } from '../content';
 import { assetUrl, formatDate } from '../lib/format';
+import { newsImage } from '../lib/news-images';
 import type { Lang, Post } from '../lib/types';
 
 interface Props {
@@ -14,8 +16,13 @@ const { post, lang, extra = false } = Astro.props;
 const t = getUi(lang);
 const isEvent = post.type === 'event';
 const title = post.title[lang];
-const body = post.text[lang];
+const excerpt = post.excerpt[lang];
+const href = assetUrl(postPath(lang, post.slug[lang]));
+const image = newsImage(post.image);
+// the whole picture is shown (posters carry their own text), so a small file is enough
+const thumb = image ? await getImage({ src: image, width: 480 }) : null;
 
+// the details line of an event: weekday, date, time, place
 const when = [
   post.eventDate ? formatDate(post.eventDate, lang, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '',
   post.eventTime,
@@ -23,61 +30,45 @@ const when = [
 ]
   .filter(Boolean)
   .join(' · ');
-
 const posted = post.posted ? formatDate(post.posted, lang, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-const badgeDay = post.eventDate ? formatDate(post.eventDate, lang, { day: 'numeric' }) : '';
-const badgeMonth = post.eventDate ? formatDate(post.eventDate, lang, { month: 'short' }).replace('.', '') : '';
 
-let isFacebook = false;
-try {
-  const host = new URL(post.link).hostname.toLowerCase();
-  isFacebook = host.endsWith('facebook.com') || host === 'fb.me' || host.endsWith('fb.com');
-} catch {
-  isFacebook = false;
-}
-const actionLabel = isEvent ? (isFacebook ? t.viewFacebook : t.moreInfo) : t.readMore;
-const fallback = assetUrl('poster-fallback.svg');
+// the stand-in for a missing picture: the event date, or for news the day it was posted
+const dateSource = isEvent && post.eventDate ? post.eventDate : post.posted;
+const dayNumber = dateSource ? formatDate(dateSource, lang, { day: '2-digit' }) : '';
+const monthShort = dateSource ? formatDate(dateSource, lang, { month: 'short' }).replace('.', '') : '';
+const dateLabel = isEvent && post.eventDate ? formatDate(post.eventDate, lang, { weekday: 'long' }) : t.tagNews;
 ---
 
-<article class="flex items-start gap-3.5 overflow-hidden rounded-box bg-base-100 p-3 sm:gap-0 sm:p-0" data-extra={extra ? '' : undefined}>
+<article class="grid overflow-hidden rounded-box bg-base-100 md:grid-cols-[170px_minmax(0,1fr)]" data-extra={extra ? '' : undefined}>
   {
-    post.poster && (
-      <div class="relative aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-lg bg-base-300 sm:w-60 sm:rounded-none">
-        <img
-          src={post.poster}
-          alt=""
-          loading="lazy"
-          referrerpolicy="no-referrer"
-          class="h-full w-full object-cover"
-          onerror={`this.onerror=null;this.src='${fallback}'`}
-        />
-        {isEvent && badgeDay && (
-          <div class="absolute left-1.5 top-1.5 rounded-md bg-secondary px-2 py-0.5 text-center font-display font-bold leading-none text-secondary-content sm:left-4 sm:top-4 sm:px-3 sm:py-1.5">
-            <span class="block text-xl sm:text-3xl">{badgeDay}</span>
-            <span class="block text-[11px] uppercase tracking-widest sm:text-base">{badgeMonth}</span>
-          </div>
-        )}
-      </div>
+    thumb ? (
+      <a href={href} tabindex="-1" aria-hidden="true" class="post-thumb" style={`--src:url(${thumb.src})`}>
+        <img src={thumb.src} alt="" width={thumb.attributes.width} height={thumb.attributes.height} loading="lazy" decoding="async" />
+      </a>
+    ) : (
+      <a href={href} tabindex="-1" aria-hidden="true" class:list={['post-date', isEvent ? 'is-event' : 'is-news']}>
+        <small>{dateLabel}</small>
+        <b>{dayNumber}</b>
+        <i>{monthShort}</i>
+      </a>
     )
   }
 
-  <div class="flex min-w-0 flex-1 flex-col items-start gap-1.5 sm:gap-3 sm:p-7">
-    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-      <span class:list={['badge badge-sm font-semibold uppercase tracking-wider sm:badge-md', isEvent ? 'badge-secondary' : 'badge-primary']}>
+  <div class="flex min-w-0 flex-col items-start gap-2 p-5 md:px-6 md:py-5">
+    <div class="flex flex-wrap items-center gap-2.5">
+      <span class:list={['badge badge-sm font-semibold uppercase tracking-wider', isEvent ? 'badge-secondary' : 'badge-primary']}>
         {isEvent ? t.tagEvent : t.tagNews}
       </span>
-      {posted && (
-        <span class="text-[13px] font-semibold text-base-content/60 sm:text-[15px]">
-          {t.posted} {posted}
-        </span>
-      )}
+      {posted && <span class="text-[13px] font-semibold text-base-content/60 sm:text-[15px]">{t.posted} {posted}</span>}
     </div>
 
-    <h3 class="font-display text-[22px] font-bold uppercase leading-[1.05] sm:text-[34px]">{title}</h3>
+    <h3 class="font-display text-[26px] font-bold uppercase leading-[1.05] sm:text-[30px]">
+      <a href={href} class="hover:text-accent">{title}</a>
+    </h3>
 
     {
       isEvent && when && (
-        <p class="flex items-start gap-2 text-sm font-semibold sm:text-[17px]">
+        <p class="flex items-start gap-2 text-[15px] font-semibold sm:text-base">
           <svg class="mt-0.5 shrink-0 text-secondary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z" />
             <circle cx="12" cy="10" r="2.5" />
@@ -87,21 +78,13 @@ const fallback = assetUrl('poster-fallback.svg');
       )
     }
 
-    {body && <p class="line-clamp-3 whitespace-pre-line break-words text-sm text-[#2b4766] sm:line-clamp-none sm:text-[17px]">{body}</p>}
+    {excerpt && <p class="line-clamp-2 break-words text-[15px] text-[#2b4766] sm:text-base">{excerpt}</p>}
 
-    {
-      post.link && (
-        <a
-          href={post.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          class:list={['btn', isEvent ? 'btn-primary' : 'btn-ghost text-primary']}>
-          {actionLabel}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M7 17L17 7M8 7h9v9" />
-          </svg>
-        </a>
-      )
-    }
+    <a href={href} class="btn btn-primary mt-auto">
+      {t.readMore}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    </a>
   </div>
 </article>

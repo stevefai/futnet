@@ -7,12 +7,16 @@ import LangSwitch from './LangSwitch.astro';
 interface Props {
   lang: Lang;
   page?: 'home' | 'news' | 'contact';
+  /** this page in each language, when it is not one of the fixed pages (e.g. a news post) */
+  itPath?: string;
+  enPath?: string;
 }
 
 const { lang, page = 'home' } = Astro.props;
+const props = Astro.props;
 const t = getUi(lang);
-const itPath = paths[page].it;
-const enPath = paths[page].en;
+const itPath = props.itPath ?? paths[page].it;
+const enPath = props.enPath ?? paths[page].en;
 const homePath = paths.home[lang];
 const home = assetUrl(homePath);
 const links = [

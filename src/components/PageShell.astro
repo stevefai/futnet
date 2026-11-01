@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { loadSiteData } from '../lib/sheet';
+import { loadSiteData } from '../lib/news';
 import Header from './Header.astro';
 import Hero from './Hero.astro';
 import Feed from './Feed.astro';
@@ -22,7 +22,7 @@ const { posts } = await loadSiteData();
   <Header lang={lang} />
   <main>
     <Hero lang={lang} />
-    <Feed lang={lang} posts={posts} limit={2} />
+    <Feed lang={lang} posts={posts} limit={4} />
     <Story lang={lang} />
     <Gallery lang={lang} />
     <Players lang={lang} />

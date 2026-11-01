@@ -20,6 +20,18 @@ function doGet(e) {
   return photos_(p);
 }
 
+/*
+  Run this ONCE by hand: in the editor choose "authorize" in the function menu above the code and press Run.
+  Google then asks you to allow the script to read your Drive files and Google Docs. Without this the website
+  gets "You do not have permission to call DocumentApp.openById" for the news. After allowing, deploy a new version.
+*/
+function authorize() {
+  const files = DriveApp.getFolderById(NEWS_FOLDER_ID).getFilesByType(MimeType.GOOGLE_DOCS);
+  if (files.hasNext()) DocumentApp.openById(files.next().getId());
+  DriveApp.getFolderById(PHOTOS_FOLDER_ID).getFiles();
+  Logger.log('OK: the script has the permissions it needs.');
+}
+
 function reply_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }

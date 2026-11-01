@@ -11,7 +11,7 @@ interface Props {
   limit?: number;
 }
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 8; // an even number: two cards per row
 const { lang, posts, limit } = Astro.props;
 const t = getUi(lang);
 
@@ -21,11 +21,11 @@ const Heading = preview ? 'h2' : 'h1';
 ---
 
 <section id={anchors[lang].feed} class="py-12 md:py-20">
-  <div class="mx-auto max-w-[1000px] px-5 md:px-10">
+  <div class="mx-auto max-w-[1200px] px-5 md:px-10">
     <Heading class="font-display text-[40px] font-bold uppercase leading-none md:text-[56px]">{t.feedTitle}</Heading>
 
-    <div class="mt-6 flex flex-col gap-3.5 md:mt-10 md:gap-6">
-      {posts.length === 0 && <p class="rounded-box bg-base-100 p-6 text-base-content/60">{t.feedEmpty}</p>}
+    <div class="mt-6 grid gap-4 md:mt-10 md:grid-cols-2 md:gap-5">
+      {posts.length === 0 && <p class="rounded-box bg-base-100 p-6 text-base-content/60 md:col-span-2">{t.feedEmpty}</p>}
       {shown.map((post, i) => <PostCard post={post} lang={lang} extra={!preview && i >= PAGE_SIZE} />)}
     </div>
 
